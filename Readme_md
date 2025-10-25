@@ -1,0 +1,22 @@
+install colima
+https://github.com/docker/docker-credential-helpers
+ brew install kubectl
+brew install helm
+brew install argocd
+ 
+>> docker run -d --name rancher \\n  -p 8080:80 \\n  -p 443:443 \\n  --restart=unless-stopped \\n  rancher/rancher:latest
+
+colima start --cpu 4 --memory 4 --kubernetes
+
+kubectl create namespace argocd
+kubectl apply -n argocd -fc
+
+kubectl get pods -n argocd
+
+nohup kubectl port-forward svc/argocd-server -n argocd 8080:443 > argocd-portforward.log 2>&1 &
+
+kubectl -n argocd get secret argocd-initial-admin-secret \
+  -o jsonpath="{.data.password}" | base64 -d; echo
+
+
+
